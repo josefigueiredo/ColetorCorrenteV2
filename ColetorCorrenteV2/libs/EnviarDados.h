@@ -5,7 +5,6 @@
  *      Author: jose
  */
 #include "Arduino.h"
-#include "DFT.h"
 #include "Ambiente.h"
 
 #ifndef LIBS_ENVIARDADOS_H_
@@ -13,12 +12,11 @@
 
 class EnviarDados {
 private:
-	DFT _dft;
 	Ambiente _amb;
 public:
-	EnviarDados(DFT *, Ambiente);
+	EnviarDados(Ambiente);
 	virtual ~EnviarDados();
-	void enviar();
+	void enviar(float *,String);
 };
 
 #endif /* LIBS_ENVIARDADOS_H_ */

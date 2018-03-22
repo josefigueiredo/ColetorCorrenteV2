@@ -14,10 +14,16 @@ Fase::Fase(Sensor *t, Sensor *c, Ambiente amb, boolean dbg) {
 	_dbg = dbg;
 
 	_amb = amb;
+	_nAmostras = _amb.getAmostras();
+	_nHarmonicas = _amb.getHarmonicas();
 
 	//intervalo entre uma amostra e outra conforme a frequencia
 	_periodo = (_amb.getFreq() == 60) ? 16666 : 20000;
 	_intervalo = (_periodo / _nAmostras) - _amb.getEstimadoConversao();
+
+	_valsTensao = new float[_nAmostras];
+	_valsCorrente = new float[_nAmostras];
+	_magnitudes = new float[(_nAmostras/ 2)+1];
 }
 
 Fase::~Fase() {
@@ -25,25 +31,46 @@ Fase::~Fase() {
 }
 
 void Fase::processar() {
-	//instancia um objeto da DFT para execuçãodos cálculos
+	EnviarDados enviador(_amb);
 
+	dft(_valsTensao,_magnitudes);
+	enviador.enviar(_magnitudes,"tensao");
 
-	_valsTensao = new float[_nAmostras];
-	_valsCorrente = new float[_nAmostras];
-
-	coletar();
-	mostrarColetas();
-
-	//chamar aqui a dft
-	DFT dft(_nAmostras);
-	dft.calcHarmonicas(_valsTensao);
-	dft.calcMagnitude(_nHarmonicas);
-
-	EnviarDados envio(&dft,_amb);
-	envio.enviar();
+	dft(_valsCorrente,_magnitudes);
+	enviador.enviar(_magnitudes,"corrente");
 }
 
+void Fase::dft(float *origem, float *resultados){
+	float *_realX = new float[(_nAmostras / 2)+1];
+	float *_imagX = new float[(_nAmostras / 2)+1];
+	float *_magX = new float[(_nAmostras / 2)+1];
+	float *_phaseX = new float[(_nAmostras / 2)+1];
+	float _piX2 = 2 * M_PI;
 
+	float accReal = 0.0, accImag = 0.0;
+
+	//aplica a dft gerando dois vetores: Real e Imaginario
+	for (int k = 0; k < _nAmostras / 2; k++) {
+		for (int i = 0; i < _nAmostras; i++) {
+			accReal += origem[i] * cos(_piX2 * k * i / _nAmostras);
+			accImag += origem[i] * sin(_piX2 * k * i / _nAmostras);
+		}
+		if(k == 0){
+			_realX[k] = accReal/_nAmostras;
+			_imagX[k] = accImag/_nAmostras;
+		}else{
+			_realX[k] = 2*accReal/_nAmostras;
+			_imagX[k] = 2*accImag/_nAmostras;
+		}
+		accReal = 0;
+		accImag = 0;
+	}
+
+	_magX[0] = sqrt(_realX[0]*_realX[0]);
+	for (int i = 1; i <= _nHarmonicas; i++) {
+		_magX[i] = sqrt(_realX[i] *_realX[i] + _imagX[i] *_imagX[i]);
+	}
+}
 void Fase::mostrarColetas() {
 	Serial.println();
 	Serial.println("Valores coletados para tensao:");
@@ -69,5 +96,4 @@ void Fase::coletar() {
 		delayMicroseconds(_intervalo);
 	}
 }
-
 

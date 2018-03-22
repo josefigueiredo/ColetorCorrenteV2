@@ -3,7 +3,7 @@
 #include "libs/Fase.h"
 #include "libs/Ambiente.h"
 
-#define DEBUG true
+#define DEBUG false
 
 const uint8_t ps64 = (1 << ADPS2) | (1 << ADPS1) | (0 << ADPS0);
 const uint8_t ps128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
@@ -17,6 +17,7 @@ Sensor tensao_f1("5.36,5.33,5.35,5.35,5.35,5.36,5.37,5.37,5.38,5.38,5.38,5.39,5.
 Sensor corrente_f1("5.36,5.33,5.35,5.35,5.35,5.36,5.37,5.37,5.38,5.38,5.38,5.39,5.39",
 		ambiente, A1);
 Fase fase1(&tensao_f1,&corrente_f1,ambiente,DEBUG);
+
 
 //sensores de corrente e tensão para FASE 2
 Sensor tensao_f2("5.36,5.33,5.35,5.35,5.35,5.36,5.37,5.37,5.38,5.38,5.38,5.39,5.39",
@@ -48,7 +49,10 @@ void setup() {
 }
 
 void loop() {
+	fase1.coletar();
 	fase1.processar();
+//	fase1.processarTensao();
+//	fase1.processarCorrente();
 	delay(1000);
 
 	fase2.processar();

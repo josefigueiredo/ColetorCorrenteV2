@@ -18,6 +18,7 @@ private:
 
 public:
 	Sensor(String,Ambiente, uint8_t);
+	Sensor();
 	virtual ~Sensor();
 
 	void setGanhoPorHarmonica(String);

@@ -20,6 +20,10 @@ Sensor::Sensor(String s,Ambiente amb,uint8_t p) {
 	setGanhoPorHarmonica(s);
 }
 
+Sensor::Sensor(){
+
+}
+
 
 
 Sensor::~Sensor() {

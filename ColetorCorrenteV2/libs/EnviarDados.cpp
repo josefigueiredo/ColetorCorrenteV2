@@ -7,9 +7,8 @@
 
 #include "EnviarDados.h"
 
-EnviarDados::EnviarDados(DFT *d, Ambiente a) {
+EnviarDados::EnviarDados(Ambiente a) {
 	// TODO Auto-generated constructor stub
-	_dft = d;
 	_amb = a;
 }
 
@@ -17,10 +16,13 @@ EnviarDados::~EnviarDados() {
 	// TODO Auto-generated destructor stub
 }
 
-void EnviarDados::enviar(){
-	Serial.println("Enviar os valores a seguir:");
-	for (int var = 0; var < _amb.getAmostras(); ++var) {
-		Serial.print(_dft.getMagX(var));
+void EnviarDados::enviar(float *dados, String nome){
+	Serial.print("Enviar de: ");
+	Serial.println(nome);
+
+	for (int i = 0; i < _amb.getAmostras(); ++i) {
+		Serial.print(dados[i]);
+		Serial.print(",");
 	}
 }
 

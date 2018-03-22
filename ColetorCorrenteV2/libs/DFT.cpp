@@ -15,9 +15,7 @@ DFT::DFT(uint8_t n) {
 	_magX = new float[(_amostras / 2)+1];
 	_phaseX = new float[(_amostras / 2)+1];
 }
-DFT::DFT(){
 
-}
 
 DFT::~DFT() {
 	// TODO Auto-generated destructor stub
@@ -29,8 +27,8 @@ void DFT::calcHarmonicas(float *origem) {
 	//aplica a dft gerando dois vetores: Real e Imaginario
 	for (int k = 0; k < _amostras / 2; k++) {
 		for (int i = 0; i < _amostras; i++) {
-			accReal += origem[i] * cos(_piVezes2 * k * i / _amostras);
-			accImag += origem[i] * sin(_piVezes2 * k * i / _amostras);
+			accReal += origem[i] * cos(_piX2 * k * i / _amostras);
+			accImag += origem[i] * sin(_piX2 * k * i / _amostras);
 		}
 		if(k == 0){
 			_realX[k] = accReal/_amostras;
